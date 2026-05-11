@@ -115,11 +115,13 @@ code {
 
 .hero-kicker,
 .section-label {
+  display: block;
   color: var(--green);
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.16em;
+  margin-bottom: 18px;
 }
 
 h1,
@@ -134,7 +136,7 @@ h1 {
   line-height: 0.96;
   letter-spacing: -0.05em;
   max-width: 760px;
-  margin: 14px 0 28px;
+  margin: 0 0 34px;
 }
 
 h2 {
@@ -155,7 +157,7 @@ h3 {
   max-width: 650px;
   color: #c9d0ca;
   font-size: clamp(18px, 2vw, 23px);
-  margin-bottom: 36px;
+  margin-bottom: 42px;
 }
 
 .hero-actions {
@@ -279,7 +281,7 @@ h3 {
   align-items: end;
   justify-content: space-between;
   gap: 36px;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .section-head h2 {
@@ -297,7 +299,7 @@ h3 {
   align-items: end;
   justify-content: space-between;
   gap: 36px;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .demo-head h2 {
@@ -418,23 +420,10 @@ h3 {
   background: var(--green);
 }
 
-.demo-proof {
+.demo-cta {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.demo-proof span {
-  border: 1px solid rgba(57, 255, 136, 0.16);
-  background: rgba(255, 255, 255, 0.035);
-  color: #c7d0ca;
-  padding: 10px 13px;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin-top: 28px;
 }
 
 .input-grid {
@@ -772,7 +761,7 @@ details p {
   .hero-subtitle {
     font-size: 16px;
     line-height: 1.42;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
   .hero-actions {
@@ -790,7 +779,7 @@ details p {
 
   .hero-visual {
     width: min(365px, 94vw);
-    margin-top: -2px;
+    margin-top: 8px;
     margin-bottom: -8px;
   }
 
@@ -805,26 +794,29 @@ details p {
 
   .carousel-shell {
     grid-template-columns: 1fr;
-    max-width: min(100%, 430px);
+    max-width: min(100%, 350px);
   }
 
   .carousel-control {
     position: absolute;
     top: 50%;
     z-index: 4;
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 48px;
+    border: 0;
     transform: translateY(-50%);
-    background: rgba(5, 7, 6, 0.72);
-    backdrop-filter: blur(12px);
+    background: transparent;
+    color: var(--green);
+    font-size: 42px;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72);
   }
 
   .carousel-control.prev {
-    left: 10px;
+    left: -10px;
   }
 
   .carousel-control.next {
-    right: 10px;
+    right: -10px;
   }
 
   .sales-carousel {
@@ -850,8 +842,8 @@ details p {
     height: 5px;
   }
 
-  .demo-proof {
-    display: none;
+  .demo-cta {
+    margin-top: 22px;
   }
 
   .input-card {
