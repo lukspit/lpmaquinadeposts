@@ -196,12 +196,15 @@ h3 {
 .hero-visual::before {
   content: "";
   position: absolute;
-  inset: 15% -8% 8%;
+  inset: -10% -18% -4%;
   z-index: -2;
   background:
-    radial-gradient(circle at 52% 44%, rgba(57, 255, 136, 0.28), transparent 58%),
-    radial-gradient(circle at 50% 76%, rgba(22, 199, 132, 0.16), transparent 48%);
-  filter: blur(28px);
+    radial-gradient(ellipse at 52% 48%, rgba(57, 255, 136, 0.24), transparent 58%),
+    radial-gradient(ellipse at 50% 82%, rgba(22, 199, 132, 0.2), transparent 46%);
+  filter: blur(38px);
+  opacity: 0.88;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 54%, #000 0 56%, transparent 82%);
+  mask-image: radial-gradient(ellipse at 50% 54%, #000 0 56%, transparent 82%);
 }
 
 .hero-visual::after {
@@ -211,9 +214,10 @@ h3 {
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 36%, transparent 48%, rgba(57, 255, 136, 0.12) 72%, transparent 86%),
-    linear-gradient(to bottom, transparent 72%, rgba(11, 15, 13, 0.42) 91%, var(--bg) 100%),
-    radial-gradient(ellipse at 50% 92%, rgba(57, 255, 136, 0.16), transparent 55%);
+    radial-gradient(ellipse at 50% 50%, transparent 48%, rgba(57, 255, 136, 0.09) 66%, transparent 82%),
+    linear-gradient(to bottom, transparent 74%, rgba(11, 15, 13, 0.5) 91%, var(--bg) 100%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 55%, #000 0 62%, transparent 86%);
+  mask-image: radial-gradient(ellipse at 50% 55%, #000 0 62%, transparent 86%);
 }
 
 .hero-visual img {
@@ -793,30 +797,36 @@ details p {
 
   .carousel-shell {
     grid-template-columns: 1fr;
-    max-width: min(calc(100% - 72px), 318px);
+    max-width: min(calc(100% - 96px), 306px);
     overflow: visible;
   }
 
   .carousel-control {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 50%;
     z-index: 4;
-    width: 28px;
+    width: 32px;
     height: 46px;
+    padding: 0;
     border: 0;
-    transform: translateY(-50%);
     background: transparent;
     color: var(--green);
     font-size: 38px;
+    line-height: 1;
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.82);
   }
 
   .carousel-control.prev {
-    left: -36px;
+    left: 0;
+    transform: translate(-125%, -50%);
   }
 
   .carousel-control.next {
-    right: -36px;
+    right: 0;
+    transform: translate(125%, -50%);
   }
 
   .sales-carousel {
