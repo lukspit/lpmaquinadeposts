@@ -284,48 +284,16 @@ p {
   position: relative;
   align-self: end;
   justify-self: center;
-  width: min(560px, 100%);
+  width: min(520px, 100%);
   margin-bottom: 0;
-  isolation: isolate;
-}
-
-.hero-visual::before {
-  content: "";
-  position: absolute;
-  inset: -6% -28% 6%;
-  z-index: -2;
-  background:
-    radial-gradient(ellipse at 50% 56%, rgba(57, 255, 136, 0.32), transparent 60%),
-    radial-gradient(ellipse at 50% 86%, rgba(22, 199, 132, 0.26), transparent 56%);
-  filter: blur(58px);
-  opacity: 0.95;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 56%, #000 0 52%, transparent 82%);
-  mask-image: radial-gradient(ellipse at 50% 56%, #000 0 52%, transparent 82%);
-}
-
-.hero-visual::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -8%;
-  transform: translateX(-50%);
-  width: 130%;
-  height: 38%;
-  z-index: -1;
-  background:
-    radial-gradient(ellipse at 50% 100%, rgba(57, 255, 136, 0.34) 0%, rgba(57, 255, 136, 0.12) 30%, transparent 70%);
-  filter: blur(28px);
-  pointer-events: none;
 }
 
 .hero-visual img {
   width: 100%;
-  opacity: 0.98;
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 96%);
-  mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 96%);
+  display: block;
   filter:
-    drop-shadow(0 36px 70px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 0 60px rgba(57, 255, 136, 0.22));
+    drop-shadow(0 30px 50px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 18px 60px rgba(57, 255, 136, 0.14));
 }
 
 /* ===== BUTTONS ===== */
@@ -386,24 +354,7 @@ p {
 
 .demo {
   border-top: 0;
-  padding-top: clamp(60px, 8vw, 110px);
-}
-
-.demo::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 280px;
-  background:
-    radial-gradient(ellipse at 65% 0%, rgba(57, 255, 136, 0.14), transparent 65%),
-    linear-gradient(to bottom, rgba(57, 255, 136, 0.03), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.demo > * {
-  position: relative;
-  z-index: 1;
+  padding-top: clamp(64px, 9vw, 120px);
 }
 
 .lead {
@@ -1051,10 +1002,15 @@ p {
   .hero-actions {
     width: 100%;
     margin-bottom: 22px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .hero-actions .button {
-    flex: 1 1 100%;
+    width: 100%;
+    max-width: 360px;
+    min-height: 52px;
+    font-size: 15px;
   }
 
   .hero-actions .button.ghost {
@@ -1067,7 +1023,7 @@ p {
   }
 
   .hero-visual {
-    width: min(440px, 96vw);
+    width: min(380px, 84vw);
     margin: 0 auto;
   }
 
