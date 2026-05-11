@@ -291,9 +291,11 @@ p {
 .hero-visual img {
   width: 100%;
   display: block;
+  -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
   filter:
-    drop-shadow(0 30px 50px rgba(0, 0, 0, 0.55))
-    drop-shadow(0 18px 60px rgba(57, 255, 136, 0.14));
+    drop-shadow(0 24px 50px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 18px 60px rgba(57, 255, 136, 0.12));
 }
 
 /* ===== BUTTONS ===== */
