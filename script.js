@@ -72,13 +72,6 @@ carousel.addEventListener('click', () => {
   showSlide(current + 1);
 });
 
-document.querySelectorAll('[data-checkout-placeholder="true"]').forEach((link) => {
-  link.addEventListener('click', (event) => {
-    event.preventDefault();
-    alert('Coloque aqui o link do checkout quando estiver pronto.');
-  });
-});
-
 const revealItems = document.querySelectorAll('.hero-content, .hero-visual, .section, .final-cta');
 
 revealItems.forEach((item) => item.classList.add('reveal'));
