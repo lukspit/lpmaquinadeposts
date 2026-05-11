@@ -196,38 +196,42 @@ h3 {
 .hero-visual::before {
   content: "";
   position: absolute;
-  inset: -10% -18% -4%;
+  inset: -18% -34% -8%;
   z-index: -2;
   background:
-    radial-gradient(ellipse at 52% 48%, rgba(57, 255, 136, 0.24), transparent 58%),
-    radial-gradient(ellipse at 50% 82%, rgba(22, 199, 132, 0.2), transparent 46%);
-  filter: blur(38px);
-  opacity: 0.88;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 54%, #000 0 56%, transparent 82%);
-  mask-image: radial-gradient(ellipse at 50% 54%, #000 0 56%, transparent 82%);
+    radial-gradient(ellipse at 52% 50%, rgba(57, 255, 136, 0.2), transparent 64%),
+    radial-gradient(ellipse at 50% 82%, rgba(22, 199, 132, 0.18), transparent 52%);
+  filter: blur(50px);
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 54%, #000 0 48%, transparent 78%);
+  mask-image: radial-gradient(ellipse at 50% 54%, #000 0 48%, transparent 78%);
 }
 
 .hero-visual::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -8% -14% 0;
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 50%, transparent 48%, rgba(57, 255, 136, 0.09) 66%, transparent 82%),
-    linear-gradient(to bottom, transparent 74%, rgba(11, 15, 13, 0.5) 91%, var(--bg) 100%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 55%, #000 0 62%, transparent 86%);
-  mask-image: radial-gradient(ellipse at 50% 55%, #000 0 62%, transparent 86%);
+    radial-gradient(ellipse at 50% 52%, transparent 52%, rgba(57, 255, 136, 0.07) 70%, transparent 88%),
+    linear-gradient(to bottom, transparent 76%, rgba(11, 15, 13, 0.42) 91%, var(--bg) 100%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 55%, #000 0 56%, transparent 86%);
+  mask-image: radial-gradient(ellipse at 50% 55%, #000 0 56%, transparent 86%);
+}
+
+.hero-visual picture {
+  position: relative;
+  z-index: 1;
+  display: block;
 }
 
 .hero-visual img {
-  position: relative;
-  z-index: 1;
   width: 100%;
   display: block;
   filter:
     drop-shadow(0 34px 70px rgba(0, 0, 0, 0.58))
-    drop-shadow(0 0 40px rgba(57, 255, 136, 0.18));
+    drop-shadow(0 0 52px rgba(57, 255, 136, 0.2));
 }
 
 .button {
