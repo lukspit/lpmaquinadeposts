@@ -113,6 +113,20 @@ code {
   opacity: 0.55;
 }
 
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(57, 255, 136, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(57, 255, 136, 0.06) 1px, transparent 1px);
+  background-size: 74px 74px;
+  opacity: 0.16;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
 .hero-kicker,
 .section-label {
   display: block;
@@ -184,6 +198,11 @@ h3 {
   text-transform: uppercase;
 }
 
+.hero-content {
+  position: relative;
+  z-index: 4;
+}
+
 .hero-visual {
   position: relative;
   align-self: end;
@@ -210,12 +229,13 @@ h3 {
 .hero-visual::after {
   content: "";
   position: absolute;
-  inset: -8% -14% 0;
+  inset: -8% -16% 0;
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 52%, transparent 52%, rgba(57, 255, 136, 0.07) 70%, transparent 88%),
-    linear-gradient(to bottom, transparent 76%, rgba(11, 15, 13, 0.42) 91%, var(--bg) 100%);
+    radial-gradient(ellipse at 50% 52%, transparent 52%, rgba(57, 255, 136, 0.06) 72%, transparent 90%),
+    linear-gradient(to bottom, transparent 66%, rgba(11, 15, 13, 0.22) 78%, rgba(11, 15, 13, 0.7) 94%, var(--bg) 100%),
+    radial-gradient(ellipse at 50% 96%, rgba(0, 0, 0, 0.62), transparent 58%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 55%, #000 0 56%, transparent 86%);
   mask-image: radial-gradient(ellipse at 50% 55%, #000 0 56%, transparent 86%);
 }
@@ -229,9 +249,12 @@ h3 {
 .hero-visual img {
   width: 100%;
   display: block;
+  opacity: 0.94;
   filter:
     drop-shadow(0 34px 70px rgba(0, 0, 0, 0.58))
-    drop-shadow(0 0 52px rgba(57, 255, 136, 0.2));
+    drop-shadow(0 0 52px rgba(57, 255, 136, 0.2))
+    saturate(0.94)
+    contrast(0.96);
 }
 
 .button {
