@@ -1,91 +1,124 @@
-const slides = Array.from(document.querySelectorAll('.sales-slide'));
-const dotsContainer = document.querySelector('.carousel-dots');
-const prev = document.querySelector('.carousel-control.prev');
-const next = document.querySelector('.carousel-control.next');
-const carousel = document.querySelector('.sales-carousel');
-let current = 0;
-let touchStartX = 0;
-let touchStartY = 0;
-let isDraggingCarousel = false;
+(function videoPlayer() {
+  const frame = document.querySelector('.video-frame');
+  if (!frame) return;
 
-function renderDots() {
-  slides.forEach((_, index) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
-    button.addEventListener('click', () => showSlide(index));
-    dotsContainer.appendChild(button);
-  });
-}
+  const videoId = frame.dataset.videoId;
+  const fallbackDuration = parseInt(frame.dataset.videoDuration, 10) || 152;
+  const poster = frame.querySelector('.video-poster');
+  const playerContainer = frame.querySelector('.video-player');
+  const progressBar = frame.querySelector('.video-progress-bar');
+  const timeCurrent = frame.querySelector('.video-time-current');
+  const timeTotal = frame.querySelector('.video-time-total');
 
-function showSlide(index) {
-  slides[current].classList.remove('current');
-  current = (index + slides.length) % slides.length;
-  slides[current].classList.add('current');
-  Array.from(dotsContainer.children).forEach((dot, dotIndex) => {
-    dot.classList.toggle('active', dotIndex === current);
-  });
-}
-
-renderDots();
-showSlide(0);
-
-prev.addEventListener('click', () => showSlide(current - 1));
-next.addEventListener('click', () => showSlide(current + 1));
-
-carousel.addEventListener('touchstart', (event) => {
-  const touch = event.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-  isDraggingCarousel = false;
-}, { passive: true });
-
-carousel.addEventListener('touchmove', (event) => {
-  const touch = event.touches[0];
-  const deltaX = touch.clientX - touchStartX;
-  const deltaY = touch.clientY - touchStartY;
-
-  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 12) {
-    isDraggingCarousel = true;
-    document.body.classList.add('is-touching-carousel');
-  }
-}, { passive: true });
-
-carousel.addEventListener('touchend', (event) => {
-  const touch = event.changedTouches[0];
-  const deltaX = touch.clientX - touchStartX;
-
-  document.body.classList.remove('is-touching-carousel');
-
-  if (!isDraggingCarousel || Math.abs(deltaX) < 42) {
-    return;
+  function formatTime(sec) {
+    const total = Math.max(0, Math.floor(sec || 0));
+    const m = Math.floor(total / 60);
+    const s = (total % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
-  showSlide(deltaX < 0 ? current + 1 : current - 1);
-});
+  timeTotal.textContent = formatTime(fallbackDuration);
 
-carousel.addEventListener('touchcancel', () => {
-  document.body.classList.remove('is-touching-carousel');
-});
+  // Non-linear curve: faster in the first half, slower toward the end.
+  // The viewer perceives early momentum and stays through the slower tail.
+  function applyCurve(progress) {
+    return Math.pow(Math.max(0, Math.min(1, progress)), 0.55);
+  }
 
-carousel.addEventListener('click', () => {
-  showSlide(current + 1);
-});
+  let player = null;
+  let started = false;
+  let progressTimer = null;
 
-const revealItems = document.querySelectorAll('.hero-content, .hero-visual, .section, .final-cta');
+  function loadYouTubeAPI(cb) {
+    if (window.YT && window.YT.Player) {
+      cb();
+      return;
+    }
+    window._ytQueue = window._ytQueue || [];
+    window._ytQueue.push(cb);
+    if (window._ytQueue.length === 1) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function () {
+        if (previousReady) previousReady();
+        const queue = window._ytQueue || [];
+        window._ytQueue = [];
+        queue.forEach((fn) => fn());
+      };
+    }
+  }
 
-revealItems.forEach((item) => item.classList.add('reveal'));
+  function startProgress() {
+    if (progressTimer) clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+      if (!player || typeof player.getCurrentTime !== 'function') return;
+      const current = player.getCurrentTime();
+      const total = player.getDuration() || fallbackDuration;
+      const real = total > 0 ? current / total : 0;
+      const visual = applyCurve(real);
+      progressBar.style.setProperty('--progress', `${visual * 100}%`);
+      timeCurrent.textContent = formatTime(current);
+    }, 250);
+  }
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target);
+  function startPlay() {
+    if (started) return;
+    started = true;
+    poster.style.display = 'none';
+    playerContainer.hidden = false;
+
+    loadYouTubeAPI(() => {
+      player = new YT.Player(playerContainer, {
+        videoId,
+        playerVars: {
+          autoplay: 1,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          color: 'white',
+        },
+        events: {
+          onReady: (event) => {
+            event.target.playVideo();
+            const dur = event.target.getDuration();
+            if (dur > 0) timeTotal.textContent = formatTime(dur);
+            startProgress();
+          },
+        },
+      });
+    });
+  }
+
+  poster.addEventListener('click', startPlay);
+  poster.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      startPlay();
     }
   });
-}, {
-  threshold: 0.12,
-  rootMargin: '0px 0px -8% 0px',
-});
+})();
 
-revealItems.forEach((item) => revealObserver.observe(item));
+(function reveal() {
+  const items = document.querySelectorAll('.hero-content, .hero-visual, .section, .final-cta');
+  if (!items.length) return;
+  items.forEach((item) => item.classList.add('reveal'));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: '0px 0px -8% 0px',
+    }
+  );
+
+  items.forEach((item) => observer.observe(item));
+})();
