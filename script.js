@@ -8,20 +8,9 @@
   const playerContainer = frame.querySelector('.video-player');
   const playerInner = frame.querySelector('.video-player-inner');
   const progressBar = frame.querySelector('.video-progress-bar');
-  const timeCurrent = frame.querySelector('.video-time-current');
-  const timeTotal = frame.querySelector('.video-time-total');
-
-  function formatTime(sec) {
-    const total = Math.max(0, Math.floor(sec || 0));
-    const m = Math.floor(total / 60);
-    const s = (total % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  timeTotal.textContent = formatTime(fallbackDuration);
 
   // Non-linear curve: faster in the first half, slower toward the end.
-  // The viewer perceives early momentum and stays through the slower tail.
+  // The viewer reads early momentum and tends to stay through the slower tail.
   function applyCurve(progress) {
     return Math.pow(Math.max(0, Math.min(1, progress)), 0.55);
   }
@@ -29,6 +18,7 @@
   let player = null;
   let started = false;
   let progressTimer = null;
+  let fallbackStart = 0;
 
   function loadYouTubeAPI(cb) {
     if (window.YT && window.YT.Player) {
@@ -51,17 +41,23 @@
     }
   }
 
-  function startProgress() {
-    if (progressTimer) clearInterval(progressTimer);
-    progressTimer = setInterval(() => {
-      if (!player || typeof player.getCurrentTime !== 'function') return;
+  function updateProgress() {
+    let real = 0;
+    if (player && typeof player.getCurrentTime === 'function') {
       const current = player.getCurrentTime();
       const total = player.getDuration() || fallbackDuration;
-      const real = total > 0 ? current / total : 0;
-      const visual = applyCurve(real);
-      progressBar.style.setProperty('--progress', `${visual * 100}%`);
-      timeCurrent.textContent = formatTime(current);
-    }, 250);
+      real = total > 0 ? current / total : 0;
+    } else {
+      // Fallback while the YT API is still loading: tick based on wall clock.
+      real = ((Date.now() - fallbackStart) / 1000) / fallbackDuration;
+    }
+    const visual = applyCurve(real);
+    progressBar.style.setProperty('--progress', `${Math.min(visual * 100, 100)}%`);
+  }
+
+  function startProgress() {
+    if (progressTimer) clearInterval(progressTimer);
+    progressTimer = setInterval(updateProgress, 250);
   }
 
   function startPlay() {
@@ -69,26 +65,39 @@
     started = true;
     poster.style.display = 'none';
     playerContainer.hidden = false;
+    fallbackStart = Date.now();
 
+    // Build the iframe directly with autoplay=1 so the YouTube player starts
+    // immediately on the same user gesture — no second click on the YT logo.
+    const params = new URLSearchParams({
+      autoplay: '1',
+      playsinline: '1',
+      rel: '0',
+      modestbranding: '1',
+      enablejsapi: '1',
+      color: 'white',
+    });
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+    iframe.title = 'Demonstração da Máquina de Posts';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.frameBorder = '0';
+    iframe.id = 'maquina-video-iframe';
+    playerInner.appendChild(iframe);
+
+    // Start the progress bar immediately on the wall-clock fallback so it
+    // reads movement even before the YT API attaches.
+    startProgress();
+
+    // Once the YT API is ready, attach it to the live iframe so the bar can
+    // follow the real currentTime (including pauses/seeks).
     loadYouTubeAPI(() => {
-      player = new YT.Player(playerInner, {
-        videoId,
-        playerVars: {
-          autoplay: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          color: 'white',
-        },
-        events: {
-          onReady: (event) => {
-            event.target.playVideo();
-            const dur = event.target.getDuration();
-            if (dur > 0) timeTotal.textContent = formatTime(dur);
-            startProgress();
-          },
-        },
-      });
+      try {
+        player = new YT.Player(iframe);
+      } catch (err) {
+        // Keep wall-clock fallback running if API attach fails.
+      }
     });
   }
 

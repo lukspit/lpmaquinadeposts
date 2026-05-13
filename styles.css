@@ -622,49 +622,18 @@ p {
 
 .video-progress {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
-  background: rgba(5, 7, 6, 0.92);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.video-progress-bar {
-  position: relative;
-  flex: 1;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
 
-.video-progress-bar::after {
-  content: "";
+.video-progress-bar {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  inset: 0;
   width: var(--progress, 0%);
   background: linear-gradient(to right, #16c784, #39ff88);
-  border-radius: inherit;
+  box-shadow: 0 0 10px rgba(57, 255, 136, 0.6);
   transition: width 220ms linear;
-  box-shadow: 0 0 10px rgba(57, 255, 136, 0.55);
-}
-
-.video-progress-time {
-  display: flex;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.02em;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
-
-.video-time-current {
-  color: var(--green);
 }
 
 .demo-cta {
@@ -1256,12 +1225,7 @@ p {
   }
 
   .video-progress {
-    padding: 12px 14px;
-    gap: 12px;
-  }
-
-  .video-progress-time {
-    font-size: 11px;
+    height: 4px;
   }
 
   .demo-cta {
