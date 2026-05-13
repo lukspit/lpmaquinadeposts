@@ -6,6 +6,7 @@
   const fallbackDuration = parseInt(frame.dataset.videoDuration, 10) || 152;
   const poster = frame.querySelector('.video-poster');
   const playerContainer = frame.querySelector('.video-player');
+  const playerInner = frame.querySelector('.video-player-inner');
   const progressBar = frame.querySelector('.video-progress-bar');
   const timeCurrent = frame.querySelector('.video-time-current');
   const timeTotal = frame.querySelector('.video-time-total');
@@ -70,7 +71,7 @@
     playerContainer.hidden = false;
 
     loadYouTubeAPI(() => {
-      player = new YT.Player(playerContainer, {
+      player = new YT.Player(playerInner, {
         videoId,
         playerVars: {
           autoplay: 1,
