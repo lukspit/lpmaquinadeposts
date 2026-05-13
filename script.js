@@ -3,19 +3,19 @@
   if (!frame) return;
 
   const videoId = frame.dataset.videoId;
-  const fallbackDuration = parseInt(frame.dataset.videoDuration, 10) || 152;
+  const fallbackDuration = parseInt(frame.dataset.videoDuration, 10) || 100;
   const poster = frame.querySelector('.video-poster');
-  const playerContainer = frame.querySelector('.video-player');
   const playerInner = frame.querySelector('.video-player-inner');
   const progressBar = frame.querySelector('.video-progress-bar');
 
   // Non-linear curve: faster in the first half, slower toward the end.
-  // The viewer reads early momentum and tends to stay through the slower tail.
   function applyCurve(progress) {
     return Math.pow(Math.max(0, Math.min(1, progress)), 0.55);
   }
 
   let player = null;
+  let playerReady = false;
+  let pendingPlay = false;
   let started = false;
   let progressTimer = null;
   let fallbackStart = 0;
@@ -48,7 +48,6 @@
       const total = player.getDuration() || fallbackDuration;
       real = total > 0 ? current / total : 0;
     } else {
-      // Fallback while the YT API is still loading: tick based on wall clock.
       real = ((Date.now() - fallbackStart) / 1000) / fallbackDuration;
     }
     const visual = applyCurve(real);
@@ -60,45 +59,47 @@
     progressTimer = setInterval(updateProgress, 250);
   }
 
+  // Build the YouTube player up front, behind the custom poster. When the
+  // user clicks the poster, we only need to call playVideo() — keeping the
+  // play call inside the original user gesture (which iOS Safari requires).
+  loadYouTubeAPI(() => {
+    player = new YT.Player(playerInner, {
+      videoId,
+      width: '100%',
+      height: '100%',
+      playerVars: {
+        autoplay: 0,
+        controls: 1,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        color: 'white',
+      },
+      events: {
+        onReady: () => {
+          playerReady = true;
+          if (pendingPlay && player && typeof player.playVideo === 'function') {
+            player.playVideo();
+            pendingPlay = false;
+          }
+        },
+      },
+    });
+  });
+
   function startPlay() {
     if (started) return;
     started = true;
-    poster.style.display = 'none';
-    playerContainer.hidden = false;
+    poster.classList.add('is-playing');
     fallbackStart = Date.now();
-
-    // Build the iframe directly with autoplay=1 so the YouTube player starts
-    // immediately on the same user gesture — no second click on the YT logo.
-    const params = new URLSearchParams({
-      autoplay: '1',
-      playsinline: '1',
-      rel: '0',
-      modestbranding: '1',
-      enablejsapi: '1',
-      color: 'white',
-    });
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
-    iframe.title = 'Demonstração da Máquina de Posts';
-    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen = true;
-    iframe.frameBorder = '0';
-    iframe.id = 'maquina-video-iframe';
-    playerInner.appendChild(iframe);
-
-    // Start the progress bar immediately on the wall-clock fallback so it
-    // reads movement even before the YT API attaches.
     startProgress();
-
-    // Once the YT API is ready, attach it to the live iframe so the bar can
-    // follow the real currentTime (including pauses/seeks).
-    loadYouTubeAPI(() => {
-      try {
-        player = new YT.Player(iframe);
-      } catch (err) {
-        // Keep wall-clock fallback running if API attach fails.
-      }
-    });
+    if (playerReady && player && typeof player.playVideo === 'function') {
+      // Called synchronously in the click handler — preserves the user gesture.
+      player.playVideo();
+    } else {
+      // API still loading; queue the play so it fires the moment onReady runs.
+      pendingPlay = true;
+    }
   }
 
   poster.addEventListener('click', startPlay);

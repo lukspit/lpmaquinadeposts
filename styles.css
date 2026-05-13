@@ -553,12 +553,25 @@ p {
     0 0 48px -12px rgba(57, 255, 136, 0.22);
 }
 
-.video-poster {
+.video-stage {
   position: relative;
+  width: 100%;
   aspect-ratio: 16 / 9;
+}
+
+.video-poster {
+  position: absolute;
+  inset: 0;
   cursor: pointer;
   overflow: hidden;
   outline: none;
+  z-index: 2;
+  transition: opacity 280ms ease;
+}
+
+.video-poster.is-playing {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .video-poster img {
@@ -604,10 +617,10 @@ p {
 }
 
 .video-player {
-  position: relative;
-  aspect-ratio: 16 / 9;
+  position: absolute;
+  inset: 0;
   background: var(--bg-deep);
-  width: 100%;
+  z-index: 1;
 }
 
 .video-player-inner,
